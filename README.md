@@ -44,7 +44,7 @@ GET /api/v1/users?provider=DataProviderX
 
 2. Filter by Status:
 ```
-GET /api/v1/users?statusCode=authorised
+GET /api/v1/users?status=authorised
 ```
 Available status: authorised, decline, refunded
 
@@ -60,14 +60,14 @@ GET /api/v1/users?currency=USD
 
 5. Combined Filters:
 ```
-GET /api/v1/users?provider=DataProviderX&statusCode=authorised&balanceMin=10&balanceMax=100&currency=USD
+GET /api/v1/users?provider=DataProviderX&status=authorised&balanceMin=10&balanceMax=100&currency=USD
 ```
 ## Architecture
 
 1. **Service Pattern**: Used to separate business logic from controllers
 2. **Strategy Pattern**: For handling different data providers
 3. **Pipeline Pattern**: For Flexible filter implementation
-4. **Streaming Parser**: For Uses cerbero/json-parser for memory-efficient processing
+4. **Streaming Parser**: Uses cerbero/json-parser for memory-efficient processing
 
 ## Testing
 
