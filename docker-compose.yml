@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+    laravel-app:
+        container_name: multi-providers
+        build:
+            context: .
+            dockerfile: Dockerfile
+        volumes:
+            - .:/var/www/html
+        working_dir: /var/www/html
+        networks:
+            - laravel-app-network
+        restart: unless-stopped
+
+    nginx:
+        image: nginx:alpine
+        container_name: multi-providers-nginx
+        ports:
+            - "8080:80"
+        volumes:
+            - .:/var/www/html
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        working_dir: /var/www/html
+        depends_on:
+            - laravel-app
+        networks:
+            - laravel-app-network
+        restart: unless-stopped
+
+networks:
+    laravel-app-network:
+        driver: bridge
