@@ -16,9 +16,7 @@ use App\Services\PaymentProviders\Filters\BalanceMinFilter;
 
 abstract class BasePaymentProvider implements PaymentProviderInterface
 {
-    protected array $statusMap = [];
     protected string $filePath;
-    protected array $fieldMap = [];
 
     protected function readJsonFile(): LazyCollection
     {
@@ -30,38 +28,10 @@ abstract class BasePaymentProvider implements PaymentProviderInterface
         });
     }
 
-    protected function normalizeDate(string $date): string
-    {
-        return Carbon::parse($date)->format('Y-m-d');
-    }
-
-    protected function transformUser(array $user): array
-    {
-        $transformed = [];
-        foreach ($this->fieldMap as $originalField => $normalizedField) {
-            if (isset($user[$originalField])) {
-                $transformed[$normalizedField] = $user[$originalField];
-            }else{
-                $transformed[$originalField] = $user[$normalizedField];
-            }
-        }
-
-        $transformed['provider'] = $this->getName();
-        $transformed['status'] = $this->transformStatus($user[$this->fieldMap['status']]);
-        $transformed['created_at'] = $this->normalizeDate($user[$this->fieldMap['created_at']]);
-        
-        return $transformed;
-    }
-
-    public function transformStatus(string|int $status): string
-    {
-        return $this->statusMap[$status] ?? 'unknown';
-    }
-
     public function getUsers(array $filters = []): LazyCollection
     {
         return $this->readJsonFile()
-            ->map(fn($user) => $this->transformUser($user))
+            ->map(fn($user) => $this->mapData($user))
             ->map(function ($user) use ($filters) {
                 return app(Pipeline::class)
                     ->send($user)

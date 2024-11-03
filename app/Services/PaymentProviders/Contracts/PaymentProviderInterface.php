@@ -8,5 +8,5 @@ interface PaymentProviderInterface
 {
     public function getName(): string;
     public function getUsers(array $filters = []): LazyCollection;
-    public function transformStatus(string|int $status): string;
+    public function mapData(array $record): array;
 }
